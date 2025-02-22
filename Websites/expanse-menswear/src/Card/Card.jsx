@@ -32,57 +32,44 @@ const [products] = useState([{
     } ;
 
     const onApprove = (data, actions) => {
-        return actions.order.capture().then((details) => {
-          alert(`Transaction completed by ${details.payer.name.given_name}`);
-          // You can add backend logic here to handle the order
-        });
+        return actions.order.capture();      
+        alert(`Transaction completed by ${details.payer.name.given_name}`);
+
+        //Send order to the backend
+
+const order ={
+  product:products.name,
+  price: products.price,
+  payer:details.payer,
+  paymentID: details.id,
+};
+        try{
+          const response = await axios.post('http://localhost:5000/api/orders', order);
+          console.log('Order saved:', response.data);
+        } catch(error){
+          console.error('Error saving order:',error);
+        }
       };
     
     
 
-  return (
-    <div>
-      <PayPalScriptProvider options={{"clientId": "Your client ID"}}>
-        <div style={styles.store}>
-{products.map((product)=>  (
-<div key={product.id} style={styles.card}>
-    <img style={styles.image} src={product.imgUrl} alt={product.description} />
-    <h2>{product.name}</h2>
-    <p>{product.description}</p>
-    <p>Size: {product.size}</p>
-    <p>${product.price}</p>
-    <PayPalButtons 
-    createOrder={createOrder(product)}
-    onApprove={onApprove}
-    />
-</div>
-))}
+      return (
+        <div className="card" style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+          <div className="card-body">
+            <h5 className="card-title">{product.name}</h5>
+            <p className="card-text">{product.description}</p>
+            <p className="card-text">
+              <strong>Price:</strong> {product.price} {product.currency}
+            </p>
+            <PayPalScriptProvider options={{ "client-id": "YOUR_PAYPAL_CLIENT_ID" }}>
+              <PayPalButtons
+                createOrder={createOrder}
+                onApprove={onApprove}
+              />
+            </PayPalScriptProvider>
+          </div>
         </div>
-      </PayPalScriptProvider>
-    </div>
-  )
-};
-
-const styles = {
-    store: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '16px',
-      padding: '16px',
-    },
-    card: {
-      border: '1px solid #ccc',
-      borderRadius: '8px',
-      padding: '16px',
-      maxWidth: '300px',
-      textAlign: 'center',
-    },
-    image: {
-      width: '50%',
-      borderRadius: '8px',
-      marginBottom: '16px',
-    },
-  };
-  
-
-export default Card
+      );
+    };
+    
+export default Card    
