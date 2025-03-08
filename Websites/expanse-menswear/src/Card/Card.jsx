@@ -95,6 +95,7 @@ const styles = {
   },
   image: {
     width: '100%',
+    height: 'auto',
     borderRadius: '8px',
     marginBottom: '16px',
   },
