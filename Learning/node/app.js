@@ -9,7 +9,7 @@ const app = express();
 
 // connect to MongoDB
 const dbURI =
-    "mongodb+srv://Blogger2:Blog123@cluster0.elykmd4.mongodb.net/node?retryWrites=true&w=majority&appName=Cluster0";
+    "mongodb+srv://###:###@cluster0.elykmd4.mongodb.net/node?retryWrites=true&w=majority&appName=Cluster0";
 mongoose
     .connect(dbURI)
     .then((result) => {

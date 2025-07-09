@@ -1,4 +1,4 @@
-const name1 = "ROndo";
+const name1 = "Rondo";
 
 console.log(name1);
 
