@@ -1,32 +1,48 @@
 const express = require("express");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const Blog = require("./models/blog");
 
 // set up express app
 
 const app = express();
 
+// connect to MongoDB
+const dbURI =
+    "mongodb+srv://Blogger2:Blog123@cluster0.elykmd4.mongodb.net/node?retryWrites=true&w=majority&appName=Cluster0";
+mongoose
+    .connect(dbURI)
+    .then((result) => {
+        console.log("connected");
+        app.listen(3000);
+    })
+    .then((err) => console.log(err));
+
 // register view engine
 app.set("view engine", "ejs");
 
+// listen for requests
+
+// middleware and static files
+app.use(express.static("public"));
+
+app.use(morgan("dev"));
+
 app.get("/", (req, res) => {
-    const blogs = [
-        {
-            title: "Yoshi finds eggs",
-            snippet: "Lorem ipsum dolor sit amet consectetur",
-        },
-        {
-            title: "Mario finds stars",
-            snippet: "Lorem ipsum dolor sit amet consectetur",
-        },
-        {
-            title: "How to defeat bowser",
-            snippet: "Lorem ipsum dolor sit amet consectetur",
-        },
-    ];
-    res.render("index", { title: "Home", blogs });
+    res.redirect("/blogs");
 });
 
-// listen for requests
-app.listen(3000);
+// blog routes
+app.get("/blogs", (req, res) => {
+    Blog.find()
+        .sort({ createdAt: -1 })
+        .then((result) => {
+            res.render("index", { title: "All Blogs", blogs: result });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
 
 app.get("/", (req, res) => {
     res.render("index", { title: "Home" });
